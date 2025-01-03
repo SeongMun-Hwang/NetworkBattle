@@ -48,11 +48,14 @@ public class PlayerController : NetworkBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 1000, LayerMask.GetMask("Ground")))
             {
-                attackTargetPosition = hit.point;
-                SetState(State.Attack);
-                targetPosition= transform.position;
+                if (GetComponent<MagicPoint>().UseMagic(20))
+                {
+                    attackTargetPosition = hit.point;
+                    SetState(State.Attack);
+                    targetPosition = transform.position;
 
-                GetComponent<ProjectileLauncher>().Attack(attackTargetPosition);
+                    GetComponent<ProjectileLauncher>().Attack(attackTargetPosition);
+                }
             }
         }
 

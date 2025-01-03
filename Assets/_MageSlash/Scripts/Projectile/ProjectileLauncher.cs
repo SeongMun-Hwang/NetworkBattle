@@ -43,6 +43,7 @@ public class ProjectileLauncher : NetworkBehaviour
     {
         //server projectile은 시각적으로 보이는게 없음. 따라서 충돌만 계산
         GameObject go = Instantiate(serverProjectilePrefab, spawnPos, Quaternion.identity);
+        go.GetComponent<DealDamage>().SetOwner(OwnerClientId);
         Physics.IgnoreCollision(GetComponent<Collider>(), go.GetComponent<Collider>());
         if (go.TryGetComponent<Rigidbody>(out Rigidbody rigidbody))
         {

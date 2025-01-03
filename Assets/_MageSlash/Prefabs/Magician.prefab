@@ -361,7 +361,7 @@ GameObject:
   - component: {fileID: 1613364030872105193}
   - component: {fileID: 5609454182317721282}
   m_Layer: 3
-  m_Name: Image (1)
+  m_Name: MpBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -821,6 +821,7 @@ GameObject:
   - component: {fileID: 3234157444361781697}
   - component: {fileID: 1512002177309639117}
   - component: {fileID: 2705792883768991341}
+  - component: {fileID: 3637750745429256777}
   m_Layer: 3
   m_Name: Canvas
   m_TagString: Untagged
@@ -884,6 +885,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82a1e8a0c5c5124f9e2963395f785cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3637750745429256777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2292087686084571117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99648265744a3a240be02d33b3922267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  health: {fileID: 8018882214409332918}
+  magicPoint: {fileID: 5912880042804846400}
+  healthBarImg: {fileID: 4872533308563555727}
+  manaBarImg: {fileID: 5609454182317721282}
 --- !u!1 &2365931561228071230
 GameObject:
   m_ObjectHideFlags: 0
@@ -1667,8 +1685,10 @@ GameObject:
   - component: {fileID: 939586510053466872}
   - component: {fileID: 2952906360290009398}
   - component: {fileID: 2482677014457447899}
+  - component: {fileID: 8449890270483144850}
   - component: {fileID: 4382686581182446626}
   - component: {fileID: 8018882214409332918}
+  - component: {fileID: 5912880042804846400}
   - component: {fileID: 1827746712506871231}
   - component: {fileID: 6857887717435629108}
   - component: {fileID: 8533193876106137921}
@@ -1809,6 +1829,19 @@ MonoBehaviour:
     TriggerNameHash: 2081823275
     TransitionIndex: 0
   m_Animator: {fileID: 7078926006580605905}
+--- !u!114 &8449890270483144850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4836776205887003278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0efd7663d9e51e94e9406f969107134b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &4382686581182446626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1843,6 +1876,22 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth:
     m_InternalValue: 0
+--- !u!114 &5912880042804846400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4836776205887003278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5541d1336d650ae4ca0d79e8a0bc2439, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  magicPoint: 100
+  currentMagic:
+    m_InternalValue: 100
 --- !u!114 &1827746712506871231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2561,7 +2610,7 @@ GameObject:
   - component: {fileID: 6631750537732752670}
   - component: {fileID: 4872533308563555727}
   m_Layer: 3
-  m_Name: Image
+  m_Name: HpBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

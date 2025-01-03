@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class Health : NetworkBehaviour
     public int maxHealth = 100;
     public NetworkVariable<int> currentHealth=new NetworkVariable<int>();
     bool isDead;
+    public Action onDie;
     public override void OnNetworkSpawn()
     {
         if(!IsServer) return;
@@ -27,6 +29,7 @@ public class Health : NetworkBehaviour
         if (currentHealth.Value == 0)
         {
             isDead= true;
+            onDie?.Invoke();
         }
     }
 }
