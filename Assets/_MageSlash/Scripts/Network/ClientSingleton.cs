@@ -1,3 +1,6 @@
+using Newtonsoft.Json;
+using System;
+using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -7,6 +10,7 @@ using Unity.Services.Core;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ClientSingleton : MonoBehaviour
 {
@@ -33,24 +37,50 @@ public class ClientSingleton : MonoBehaviour
 
         if (state == AuthState.Authenticated)
         {
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnDisconnected;
             return true;
         }
         return false;
     }
+
+    private void OnDisconnected(ulong clientId)
+    {
+        //서버가 아니고, 나간 사람이 내가 아니면
+        if(clientId != 0 && clientId !=NetworkManager.Singleton.LocalClientId)
+        {
+            return;
+        }
+        if (SceneManager.GetActiveScene().name != "MenuScene")
+        {
+            SceneManager.LoadScene("MenuScene");
+        }
+    }
+
     public async Task StartClientAsync(string joinCode)
     {
         try
         {
-            allocation=await RelayService.Instance.JoinAllocationAsync(joinCode);
+            allocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
         }
-        catch(RelayServiceException e) 
+        catch (RelayServiceException e)
         {
             Debug.LogException(e);
             return;
         }
-        UnityTransport transport=NetworkManager.Singleton.GetComponent<UnityTransport>();
+        UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
         RelayServerData relayServerData = allocation.ToRelayServerData("dtls");
         transport.SetRelayServerData(relayServerData);
+
+        //payload
+        UserData userData = new UserData()
+        {
+            userName = AuthenticationService.Instance.PlayerName ?? "Annoymous",
+            userId = AuthenticationService.Instance.PlayerId
+        };
+        string payload = JsonConvert.SerializeObject(userData);
+        byte[] payloadBytes = Encoding.UTF8.GetBytes(payload);
+        NetworkManager.Singleton.NetworkConfig.ConnectionData = payloadBytes;
+
         NetworkManager.Singleton.StartClient();
     }
 }

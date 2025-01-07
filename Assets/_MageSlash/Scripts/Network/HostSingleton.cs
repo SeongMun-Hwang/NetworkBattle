@@ -9,6 +9,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using Unity.Services.Lobbies.Models;
 using System.Collections;
+using Newtonsoft.Json;
+using System.Text;
+using Unity.Services.Authentication;
+using System;
+using WebSocketSharp;
 public class HostSingleton : MonoBehaviour
 {
     static HostSingleton instance;
@@ -30,6 +35,7 @@ public class HostSingleton : MonoBehaviour
     Allocation allocation;
     string joinCode;
     string lobbyId;
+
     public async Task StartHostAsync()
     {
         try
@@ -69,10 +75,35 @@ public class HostSingleton : MonoBehaviour
             Debug.LogException(e);
             return;
         }
+        //여기까지 로비
+        ServerSingleton.Instance.Init();
+
+        UserData userData = new UserData()
+        {
+            userName = AuthenticationService.Instance.PlayerName ?? "Annoymous",
+            userId = AuthenticationService.Instance.PlayerId
+        };
+        string payload = JsonConvert.SerializeObject(userData);
+        byte[] payloadBytes = Encoding.UTF8.GetBytes(payload);
+        NetworkManager.Singleton.NetworkConfig.ConnectionData = payloadBytes;
+
+        ServerSingleton.Instance.OnClientLeft += HandleClientLeft;
 
         NetworkManager.Singleton.StartHost();
         NetworkManager.Singleton.SceneManager.LoadScene("BattleScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
+
+    private async void HandleClientLeft(string authId)
+    {
+        try
+        {
+            await LobbyService.Instance.RemovePlayerAsync(lobbyId, authId);
+        }
+        catch(LobbyServiceException e){ 
+            Debug.LogException(e);
+        }
+    }
+
     IEnumerator HeartBeatLobby(float waitTimeSeconds)
     {
         var delay = new WaitForSecondsRealtime(waitTimeSeconds);
@@ -81,5 +112,22 @@ public class HostSingleton : MonoBehaviour
             LobbyService.Instance.SendHeartbeatPingAsync(lobbyId);
             yield return delay;
         }
+    }
+    public async void ShutDown()
+    {
+        StopAllCoroutines();
+        if (!lobbyId.IsNullOrEmpty())
+        {
+            try
+            {
+                await LobbyService.Instance.DeleteLobbyAsync(lobbyId);
+            }
+            catch(LobbyServiceException e)
+            {
+                Debug.LogException(e);
+            }
+            lobbyId = null;
+        }
+        ServerSingleton.Instance.OnClientLeft-= HandleClientLeft;
     }
 }
