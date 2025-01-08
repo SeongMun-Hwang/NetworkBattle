@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -16,6 +17,10 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] float rotationSpeed = 10f;
     [SerializeField] float moveSpeed = 10f;
 
+    public static Action<PlayerController> OnPlayerSpawn;
+    public static Action<PlayerController> OnPlayerDespawn;
+    public StatDisplayer statDisplayer;
+
     Vector3 targetPosition;
     Vector3 attackTargetPosition;
 
@@ -23,8 +28,19 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (IsServer)
+        {
+            OnPlayerSpawn?.Invoke(this);
+        }
         if (!IsOwner) return;
         targetPosition = transform.position;
+    }
+    public override void OnNetworkDespawn()
+    {
+        if (IsServer)
+        {
+            OnPlayerDespawn?.Invoke(this);
+        }
     }
 
     void Start()

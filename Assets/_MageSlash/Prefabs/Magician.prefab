@@ -1917,6 +1917,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   rotationSpeed: 10
   moveSpeed: 10
+  statDisplayer: {fileID: 3637750745429256777}
 --- !u!114 &2482677014457447899
 MonoBehaviour:
   m_ObjectHideFlags: 0

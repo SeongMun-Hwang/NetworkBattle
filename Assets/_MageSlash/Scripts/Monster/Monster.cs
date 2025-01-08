@@ -11,8 +11,9 @@ public class Monster : NetworkBehaviour
     {
         GetComponent<Health>().onDie -= OnDie;
     }
-    void OnDie()
+    void OnDie(Health sender)
     {
+        gameObject.GetComponent<NetworkObject>().Despawn();
         Destroy(gameObject);
     }
 }

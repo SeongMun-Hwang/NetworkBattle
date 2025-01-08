@@ -7,21 +7,22 @@ public class Health : NetworkBehaviour
     public int maxHealth = 100;
     public NetworkVariable<int> currentHealth=new NetworkVariable<int>();
     bool isDead;
-    public Action onDie;
+    public Action<Health> onDie;
+    public static Action<ulong, int> OnScored;
     public override void OnNetworkSpawn()
     {
         if(!IsServer) return;
         currentHealth.Value = maxHealth;
     }
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, ulong cliendId)
     {
-        ModifyHealthValue(-damage);
+        ModifyHealthValue(-damage, cliendId);
     }
-    public void RestoreHealth(int heal)
+    public void RestoreHealth(int heal, ulong clientId)
     {
-        ModifyHealthValue(heal);
+        ModifyHealthValue(heal, clientId);
     }
-    void ModifyHealthValue(int value)
+    void ModifyHealthValue(int value, ulong cliendId)
     {
         if(isDead) return;
         int newHealth = currentHealth.Value + value;
@@ -29,7 +30,16 @@ public class Health : NetworkBehaviour
         if (currentHealth.Value == 0)
         {
             isDead= true;
-            onDie?.Invoke();
+            onDie?.Invoke(this);
+
+            if(GetComponent<PlayerController>() != null)
+            {
+                OnScored?.Invoke(cliendId, 10);
+            }
+            else if (GetComponent<Monster>() != null)
+            {
+                OnScored?.Invoke(cliendId, 1);
+            }
         }
     }
 }

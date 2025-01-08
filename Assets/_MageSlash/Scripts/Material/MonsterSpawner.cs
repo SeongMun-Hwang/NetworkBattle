@@ -24,7 +24,15 @@ public class MonsterSpawner : NetworkBehaviour
     {
         GameObject go = Instantiate(monsterPrefabs[Random.Range(0, monsterPrefabs.Length)],GetSpawnPosition(),Quaternion.identity);
         go.GetComponent<NetworkObject>().Spawn();
+        go.GetComponent<Health>().onDie += onDie;
     }
+
+    private void onDie(Health sender)
+    {
+        sender.onDie -= onDie;
+        SpawnMonster();
+    }
+
     Vector3 GetSpawnPosition()
     {
         float x = 0;

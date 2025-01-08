@@ -29,7 +29,7 @@ public class DealDamage : MonoBehaviour
 
         if (other.TryGetComponent<Health>(out Health health))
         {
-            health.TakeDamage(damage);
+            health.TakeDamage(damage, ownerClientId);
         }
     }
 }

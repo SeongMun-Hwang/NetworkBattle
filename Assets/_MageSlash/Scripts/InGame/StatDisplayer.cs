@@ -13,7 +13,7 @@ public class StatDisplayer : NetworkBehaviour
     [SerializeField] Image manaBarImg;
 
     [SerializeField] TMP_Text userNameTmp;
-    NetworkVariable<FixedString128Bytes> userName = new NetworkVariable<FixedString128Bytes>();
+    public NetworkVariable<FixedString128Bytes> userName = new NetworkVariable<FixedString128Bytes>();
     public override void OnNetworkSpawn()
     {
         if (!IsClient) { return; }
