@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Unity.Multiplayer;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
@@ -6,18 +7,23 @@ using UnityEngine.SceneManagement;
 
 public class ApplicationManager : MonoBehaviour
 {
+    ApplicationData appData;
     async void Start()
     {
         DontDestroyOnLoad(gameObject);
-        //¼­¹ö¿¡¼­ µ¥µğÄÉÀÌÆ® ¼­¹ö¸¦ ½ÇÇàÇÒ ¶§ ±×·¡ÇÈ ¾ø´Â ÄÜ¼Ö·Î ½ÇÇà
-        await LaunchMode(SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null);
+
+        //await LaunchMode(SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null);
+        await LaunchMode(MultiplayerRolesManager.ActiveMultiplayerRoleMask == MultiplayerRoleFlags.Server); //í˜„ì¬ ì£¼ì²´ê°€ ì„œë²„ì¸ì§€ í™•ì¸ ë  ë•Œê¹Œì§€ ëŒ€ê¸°
     }
 
     async Task LaunchMode(bool isDedicateServer)
     {
         if (isDedicateServer)
         {
-
+            appData = new ApplicationData();
+            ServerSingleton.Instance.Init();
+            await ServerSingleton.Instance.CreateServer();
+            await ServerSingleton.Instance.serverManager.StartGameServerAsync();
         }
         else
         {

@@ -73,7 +73,7 @@ public class ScoreBoard : NetworkBehaviour
             }
         }
     }
-    //NetworkListEvent<ScoreboardData> : enumÀ» ÅëÇØ °ªÀÌ ¾î¶»°Ô º¯È­ÇÑ °ÇÁö Àü´Þ
+    //NetworkListEvent<ScoreboardData> : enumï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½î¶»ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private void HandleScoreboardChanged(NetworkListEvent<ScoreboardData> changeEvent)
     {
         switch (changeEvent.Type)

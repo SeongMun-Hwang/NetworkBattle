@@ -50,11 +50,11 @@ public class HostSingleton : MonoBehaviour
             return;
         }
         UnityTransport transport=NetworkManager.Singleton.GetComponent<UnityTransport>();
-        //ToRelayServerData ¿É¼Ç : udp - ,dtls - ,ws - ,wss - 
+        //ToRelayServerData ï¿½É¼ï¿½ : udp - ,dtls - ,ws - ,wss - 
         RelayServerData relayServerData = allocation.ToRelayServerData("dtls");
         transport.SetRelayServerData(relayServerData);
 
-        //·Îºñ »ý¼º
+        //ï¿½Îºï¿½ ï¿½ï¿½ï¿½ï¿½
         try
         {
             CreateLobbyOptions options=new CreateLobbyOptions();
@@ -62,7 +62,7 @@ public class HostSingleton : MonoBehaviour
             options.Data = new Dictionary<string, Unity.Services.Lobbies.Models.DataObject>
             {
                 {
-                    //Unity.Services.Lobbies.Models.DataObject.VisibilityOptions.Member : ´©±¸±îÁö º¼ ¼ö ÀÖ´Â°¡
+                    //Unity.Services.Lobbies.Models.DataObject.VisibilityOptions.Member : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´Â°ï¿½
                     "JoinCode",new Unity.Services.Lobbies.Models.DataObject(Unity.Services.Lobbies.Models.DataObject.VisibilityOptions.Member, joinCode)
                 }
             };
@@ -75,13 +75,13 @@ public class HostSingleton : MonoBehaviour
             Debug.LogException(e);
             return;
         }
-        //¿©±â±îÁö ·Îºñ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½
         ServerSingleton.Instance.Init();
 
         UserData userData = new UserData()
         {
             userName = AuthenticationService.Instance.PlayerName ?? "Annoymous",
-            userId = AuthenticationService.Instance.PlayerId
+            userAuthId = AuthenticationService.Instance.PlayerId
         };
         string payload = JsonConvert.SerializeObject(userData);
         byte[] payloadBytes = Encoding.UTF8.GetBytes(payload);

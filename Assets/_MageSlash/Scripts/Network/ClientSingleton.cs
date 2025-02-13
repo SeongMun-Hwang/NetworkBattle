@@ -14,6 +14,8 @@ using UnityEngine.SceneManagement;
 
 public class ClientSingleton : MonoBehaviour
 {
+    MatchplayMatchmaker matchmaker;
+    UserData userData;
     static ClientSingleton instance;
     public static ClientSingleton Instance
     {
@@ -35,8 +37,14 @@ public class ClientSingleton : MonoBehaviour
         await UnityServices.InitializeAsync();
         AuthState state = await Authenticator.DoAuth();
 
+        matchmaker = new MatchplayMatchmaker();
         if (state == AuthState.Authenticated)
         {
+            userData = new UserData()
+            {
+                userName = AuthenticationService.Instance.PlayerName ?? "Annoymous",
+                userAuthId = AuthenticationService.Instance.PlayerId
+            };
             NetworkManager.Singleton.OnClientDisconnectCallback += OnDisconnected;
             return true;
         }
@@ -45,7 +53,7 @@ public class ClientSingleton : MonoBehaviour
 
     private void OnDisconnected(ulong clientId)
     {
-        //¼­¹ö°¡ ¾Æ´Ï°í, ³ª°£ »ç¶÷ÀÌ ³»°¡ ¾Æ´Ï¸é
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï°ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï¸ï¿½
         if(clientId != 0 && clientId !=NetworkManager.Singleton.LocalClientId)
         {
             return;
@@ -64,23 +72,54 @@ public class ClientSingleton : MonoBehaviour
         }
         catch (RelayServiceException e)
         {
-            Debug.LogException(e);
+            Debug.LogError(e);
             return;
         }
         UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
         RelayServerData relayServerData = allocation.ToRelayServerData("dtls");
         transport.SetRelayServerData(relayServerData);
 
-        //payload
-        UserData userData = new UserData()
+
+        ConnectClient();
+    }
+    public async void MatchMakeAsync(Action<MatchmakerPollingResult> onMatchmakeResponse)
+    {
+        if (matchmaker.IsMatchmaking)
         {
-            userName = AuthenticationService.Instance.PlayerName ?? "Annoymous",
-            userId = AuthenticationService.Instance.PlayerId
-        };
+            return;
+        }
+        MatchmakerPollingResult result = await GetMatchAsync();
+        onMatchmakeResponse?.Invoke(result);
+    }
+    public async Task<MatchmakerPollingResult> GetMatchAsync()
+    {
+        MatchmakingResult result = await matchmaker.Matchmake(userData);
+        if (result.result == MatchmakerPollingResult.Success)
+        {
+            //start client
+            StartClient(result.ip,(ushort)result.port);
+        }
+        return result.result;
+    }
+    public void StartClient(string ip,ushort port)
+    {
+        UnityTransport transport=NetworkManager.Singleton.GetComponent<UnityTransport>();
+        transport.SetConnectionData(ip,port);
+
+        ConnectClient();
+    }
+    void ConnectClient()
+    {
+        //payload
+
         string payload = JsonConvert.SerializeObject(userData);
         byte[] payloadBytes = Encoding.UTF8.GetBytes(payload);
         NetworkManager.Singleton.NetworkConfig.ConnectionData = payloadBytes;
 
         NetworkManager.Singleton.StartClient();
+    }
+    public async Task CancelMatchmaking()
+    {
+        await matchmaker.CancelMatchmaking();
     }
 }
